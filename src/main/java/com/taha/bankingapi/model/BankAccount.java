@@ -1,16 +1,15 @@
 package com.taha.bankingapi.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "account_type")
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
-public class BankAccount {
+public abstract class BankAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,5 +17,6 @@ public class BankAccount {
     private String accountNumber;
     private String owner;
     private Double balance;
-    private String accountType;
+
+    public abstract Double calculateInterest();
 }
