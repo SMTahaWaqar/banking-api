@@ -1,6 +1,7 @@
 package com.taha.bankingapi.service;
 
 import com.taha.bankingapi.event.AccountCreditedEvent;
+import com.taha.bankingapi.exception.AccountNotFoundException;
 import com.taha.bankingapi.model.BankAccount;
 import com.taha.bankingapi.repository.BankAccountRepository;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,7 +21,9 @@ public class TransactionService {
 
     public void deposit(Long accountId, Double amount) {
         Optional<BankAccount> account = bankAccountRepository.findById(accountId);
-        if (account.isEmpty()) return;
+        if (account.isEmpty()) {
+            throw new AccountNotFoundException(accountId);
+        }
         Double updatedBalance = account.get().getBalance() + amount;
         account.get().setBalance(updatedBalance);
         bankAccountRepository.save(account.get());

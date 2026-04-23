@@ -1,21 +1,24 @@
 package com.taha.bankingapi.controller;
 
+import com.taha.bankingapi.dto.DepositRequest;
 import com.taha.bankingapi.model.BankAccount;
 import com.taha.bankingapi.service.BankAccountService;
 import com.taha.bankingapi.service.TransactionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Validated
 @RequestMapping("/accounts")
 public class BankAccountController {
-    @Autowired
-    private BankAccountService bankAccountService;
+    private final BankAccountService bankAccountService;
     private final TransactionService transactionService;
 
-    public BankAccountController(TransactionService transactionService) {
+    public BankAccountController(BankAccountService bankAccountService, TransactionService transactionService) {
         this.transactionService = transactionService;
+        this.bankAccountService = bankAccountService;
     }
 
     @GetMapping("/{id}")
@@ -26,8 +29,8 @@ public class BankAccountController {
     }
 
     @PostMapping("/{id}/deposit")
-    public ResponseEntity<String> depositAmount (@PathVariable("id") Long id, @RequestParam("amount") Double amount) {
-        transactionService.deposit(id, amount);
+    public ResponseEntity<String> depositAmount (@PathVariable("id") Long id, @RequestBody @Valid DepositRequest request) {
+        transactionService.deposit(id, request.getAmount());
         return ResponseEntity.ok("Deposit Successful");
     }
 }
